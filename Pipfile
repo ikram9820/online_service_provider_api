@@ -8,6 +8,11 @@ django = "*"
 djangorestframework = "*"
 django-debug-toolbar = "*"
 drf-nested-routers = "*"
+django-extensions = "*"
+pyparsing = "*"
+pydot = "*"
+djangorestframework-simplejwt = "*"
+djoser = "*"
 
 [dev-packages]
 
