@@ -1,16 +1,19 @@
 from rest_framework import serializers
+from django.db.models import Q 
+from django.core.exceptions import ObjectDoesNotExist
 from . import models
 
 class ServiceProviderSerialzer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(read_only = True)
-    
+    user = serializers.StringRelatedField(read_only = True)
+
     class Meta:
         model = models.ServiceProvider
-        fields = ['user_id','rate_per_hour','description','category']
+        fields = ['user_id','user','rate_per_hour','status','description','category']
 
  
 class LocationSerialzer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only = True)
+    
     class Meta:
         model = models.Location
         fields = ['user_id','x','y']
@@ -18,9 +21,10 @@ class LocationSerialzer(serializers.ModelSerializer):
 class RangeSerialzer(serializers.ModelSerializer):
     
     sp_id = serializers.IntegerField(read_only = True)
+    sp = serializers.StringRelatedField(read_only =True)
     class Meta:
         model = models.Range
-        fields = ['sp_id','x','y','radius','address']
+        fields = ['sp','sp_id','x','y','radius','address']
 
  
 class OrderSerializer(serializers.ModelSerializer):
@@ -73,7 +77,11 @@ class ReviewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         order_id = self.context['order_id']
         user_id = self.context['user_id']
-        return models.Review.objects.create(order_id=order_id,user_id= user_id, **validated_data)
+        (review,created) = models.Review.objects.get_or_create(pk = order_id, user_id= user_id)
+        review.rate =validated_data['rate']
+        review.review = validated_data['review']
+        review.save()
+        return review
 
 
 class ChatSerializer(serializers.ModelSerializer):
@@ -86,8 +94,10 @@ class ChatSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         sp_id = self.context['sp_id']
         user_id = self.context['user_id']
-        (chat,created )= models.Chat.objects.get_or_create(sp_id=sp_id,user_id= user_id, **validated_data)
-        return chat
+        try:
+            return models.Chat.objects.get(Q(sp_id = sp_id) & Q(user_id = user_id) | Q(user_id = sp_id) & Q(sp_id = user_id))
+        except ObjectDoesNotExist:
+            return models.Chat.objects.create(sp_id = sp_id, user_id = user_id,**validated_data)
 
 
 class ChatMessagesSerializer(serializers.ModelSerializer):
@@ -96,7 +106,7 @@ class ChatMessagesSerializer(serializers.ModelSerializer):
     texted_at = serializers.DateTimeField(read_only = True)
     class Meta:
         model = models.Message
-        fields = ['chat_id','author_id','texted_at','text']
+        fields = ['id','chat_id','author_id','texted_at','text']
 
     def create(self, validated_data):
         chat_id = self.context['chat_id']

@@ -83,11 +83,11 @@ class Review(models.Model):
 
 
 class Chat(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user_chat')
-    sp = models.ForeignKey(ServiceProvider, on_delete=models.CASCADE,related_name='sp_chat')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,related_name='user1_chat')
+    sp = models.ForeignKey(ServiceProvider, on_delete=models.CASCADE,related_name='user2_chat')
 
     class Meta:
-        unique_together = [['user','sp']]
+        unique_together = [['sp','user']]
 
 class Message(models.Model):
     texted_at = models.DateTimeField(auto_now_add=True)

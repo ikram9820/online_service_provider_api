@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'service_provider',
 
     'rest_framework',
+    'django_filters',
     'djoser',
     "debug_toolbar",
     'django_extensions'

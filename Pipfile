@@ -13,6 +13,7 @@ pyparsing = "*"
 pydot = "*"
 djangorestframework-simplejwt = "*"
 djoser = "*"
+django-filter = "*"
 
 [dev-packages]
 
