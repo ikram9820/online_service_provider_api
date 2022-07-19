@@ -16,8 +16,8 @@ DATABASES = { "default": dj_database_url.config() }
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
 
 
-# django_on_heroku.settings(locals(),staticfiles=False)
-# del DATABASES['default']['OPTIONS']['sslmode']
+django_on_heroku.settings(locals(),staticfiles=False)
+del DATABASES['default']['OPTIONS']['sslmode']
 
 CACHE_MIDDLEWARE_ALIAS = 'default'
 CACHE_MIDDLEWARE_SECONDS = 604800
